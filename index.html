@@ -40,6 +40,10 @@
       cursor: pointer;
     }
 
+    button:hover {
+      opacity: 0.9;
+    }
+
     .card {
       margin-top: 20px;
       background: #eef4ff;
@@ -59,21 +63,25 @@
   <div class="box">
     <h2>استعلام بيانات اللجنة</h2>
 
-    <input id="idNumber" type="text" placeholder="اكتب رقم الهوية">
+    <input 
+      id="idNumber" 
+      type="text" 
+      placeholder="مثال: 1087654321">
+
     <button onclick="searchStudent()">بحث</button>
 
     <div id="result"></div>
   </div>
 
   <script>
-    const API_URL = "ضعي_رابط_Apps_Script_هنا";
+    const API_URL = "ضع_رابط_Apps_Script_هنا";
 
     function searchStudent() {
       const id = document.getElementById("idNumber").value.trim();
       const result = document.getElementById("result");
 
       if (!id) {
-        result.innerHTML = "اكتبي رقم الهوية أولًا";
+        result.innerHTML = "اكتب رقم الهوية أولًا";
         return;
       }
 
@@ -95,7 +103,7 @@
           }
         })
         .catch(() => {
-          result.innerHTML = "صار خطأ، تأكدي من رابط Apps Script";
+          result.innerHTML = "حدث خطأ، تأكد من رابط النظام";
         });
     }
   </script>
