@@ -1,557 +1,170 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>نظام الاستعلام عن اللجان</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام الاستعلام عن اللجان</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Tahoma, Arial, sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background: #f3f6fb;
-      color: #152238;
-    }
-
-    .topbar {
-      background: linear-gradient(135deg, #1d4ed8, #0f172a);
-      color: white;
-      padding: 24px 8%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .topbar h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-    }
-
-    .topbar p {
-      margin: 0;
-      opacity: .9;
-    }
-
-    .nav-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .nav-buttons button {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,.6);
-      color: white;
-      margin: 0;
-    }
-
-    .container {
-      width: min(1100px, 92%);
-      margin: 35px auto;
-    }
-
-    .card {
-      background: white;
-      padding: 24px;
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
-      margin-bottom: 22px;
-    }
-
-    .search-card {
-      max-width: 520px;
-      margin: 60px auto;
-    }
-
-    h2 {
-      margin-top: 0;
-    }
-
-    .hint {
-      color: #64748b;
-    }
-
-    label {
-      display: block;
-      margin: 14px 0 7px;
-      font-weight: bold;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      font-size: 16px;
-    }
-
-    button {
-      background: #1d4ed8;
-      color: white;
-      border: 0;
-      border-radius: 12px;
-      padding: 13px 18px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 14px;
-    }
-
-    button:hover {
-      opacity: .92;
-    }
-
-    .secondary {
-      background: #64748b;
-    }
-
-    .danger {
-      background: #dc2626;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .result {
-      margin-top: 18px;
-      padding: 18px;
-      border-radius: 14px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-    }
-
-    .result.error {
-      background: #fef2f2;
-      border-color: #fecaca;
-    }
-
-    .result h3 {
-      margin-top: 0;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .message {
-      margin-top: 12px;
-      font-weight: bold;
-    }
-
-    .table-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-
-    .table-head input {
-      max-width: 300px;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 16px;
-    }
-
-    th, td {
-      padding: 13px;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: right;
-    }
-
-    th {
-      background: #f8fafc;
-    }
-
-    .small-btn {
-      padding: 8px 10px;
-      font-size: 14px;
-      margin: 2px;
-    }
-
-    footer {
-      text-align: center;
-      color: #64748b;
-      padding: 20px;
-    }
-
-    @media (max-width: 700px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .table-head {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .table-head input {
-        max-width: 100%;
-      }
-    }
-  </style>
+<style>
+body{font-family:Tahoma;background:#f5f7fb;margin:0}
+header{background:#0f172a;color:#fff;padding:20px;text-align:center}
+.container{max-width:1000px;margin:auto;padding:20px}
+.card{background:#fff;padding:20px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.1);margin-bottom:20px}
+input{width:100%;padding:12px;border:1px solid #ccc;border-radius:10px;margin:8px 0}
+button{background:#2563eb;color:#fff;border:none;padding:12px 18px;border-radius:10px;cursor:pointer}
+button:hover{opacity:.9}
+.hidden{display:none}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:right}
+.danger{background:#dc2626}
+</style>
 </head>
-
 <body>
-  <header class="topbar">
-    <div>
-      <h1>نظام الاستعلام عن اللجان</h1>
-      <p>الطالب يدخل رقم هويته وتظهر له بيانات اللجنة والمقر</p>
-    </div>
 
-    <div class="nav-buttons">
-      <button onclick="showStudentPage()">استعلام الطالب</button>
-      <button onclick="showAdminLogin()">لوحة الإدارة</button>
-    </div>
-  </header>
+<header>
+<h1>نظام اللجان</h1>
+<p>أدخل رقم الهوية لمعرفة رقم اللجنة ومقرها</p>
+</header>
 
-  <main class="container">
+<div class="container">
 
-    <!-- صفحة الطالب -->
-    <section id="studentPage" class="card search-card">
-      <h2>استعلام الطالب</h2>
-      <p class="hint">لا يحتاج الطالب إلى تسجيل دخول.</p>
+<div class="card">
+<h2>استعلام الطالب</h2>
+<input id="searchId" placeholder="رقم الهوية">
+<button onclick="searchStudent()">بحث</button>
+<div id="result"></div>
+</div>
 
-      <label for="nationalId">رقم الهوية</label>
-      <input id="nationalId" type="text" inputmode="numeric" placeholder="مثال: 1234567890" maxlength="10" />
+<div class="card">
+<h2>دخول الإدارة</h2>
+<input id="adminPass" type="password" placeholder="كلمة المرور">
+<button onclick="login()">دخول</button>
+</div>
 
-      <button onclick="searchStudent()">بحث</button>
+<div id="adminPanel" class="hidden card">
+<h2>إدارة الطلاب</h2>
 
-      <div id="studentResult" class="result hidden"></div>
-    </section>
+<input id="name" placeholder="اسم الطالب">
+<input id="id" placeholder="رقم الهوية">
+<input id="committee" placeholder="رقم اللجنة">
+<input id="place" placeholder="مقر اللجنة">
 
-    <!-- تسجيل دخول الإدارة -->
-    <section id="adminLoginPage" class="card hidden">
-      <h2>تسجيل دخول الإدارة</h2>
-      
+<button onclick="saveStudent()">حفظ</button>
 
-      <label for="adminPassword">كلمة المرور</label>
-      <input id="adminPassword" type="password" placeholder="أدخل كلمة المرور" />
+<table>
+<thead>
+<tr>
+<th>الاسم</th>
+<th>الهوية</th>
+<th>اللجنة</th>
+<th>المقر</th>
+<th>حذف</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+</div>
 
-      <button onclick="loginAdmin()">دخول</button>
+</div>
 
-      <div id="loginMsg" class="message"></div>
-    </section>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    <!-- لوحة الإدارة -->
-    <section id="adminPanel" class="hidden">
-      <section class="card">
-        <h2 id="formTitle">إضافة طالب</h2>
+const firebaseConfig = {
+  apiKey: "AIzaSyD3u6Aenlk_akT53hN8hfcsl1bFR1zVfXo",
+  authDomain: "ggggg-7de8e.firebaseapp.com",
+  projectId: "ggggg-7de8e",
+  storageBucket: "ggggg-7de8e.firebasestorage.app",
+  messagingSenderId: "1070467222108",
+  appId: "1:1070467222108:web:347cea149f6b3d6e8ef499",
+  measurementId: "G-DVZ0C36B6G"
+};
 
-        <div class="grid">
-          <div>
-            <label for="studentName">اسم الطالب</label>
-            <input id="studentName" type="text" placeholder="مثال: محمد أحمد" />
-          </div>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-          <div>
-            <label for="studentId">رقم الهوية</label>
-            <input id="studentId" type="text" inputmode="numeric" maxlength="10" placeholder="مثال: 1234567890" />
-          </div>
+const PASSWORD = "School@2026";
 
-          <div>
-            <label for="committeeNo">رقم اللجنة</label>
-            <input id="committeeNo" type="text" placeholder="مثال: 12" />
-          </div>
+window.login = function(){
+ const pass = document.getElementById("adminPass").value;
+ if(pass===PASSWORD){
+   document.getElementById("adminPanel").classList.remove("hidden");
+   loadStudents();
+ }else{
+   alert("كلمة المرور غلط");
+ }
+}
 
-          <div>
-            <label for="committeePlace">مقر اللجنة</label>
-            <input id="committeePlace" type="text" placeholder="مثال: مبنى A - الدور الثاني" />
-          </div>
-        </div>
+window.saveStudent = async function(){
+ const name=document.getElementById("name").value;
+ const id=document.getElementById("id").value;
+ const committee=document.getElementById("committee").value;
+ const place=document.getElementById("place").value;
 
-        <div class="actions">
-          <button onclick="saveStudent()">حفظ الطالب</button>
-          <button id="cancelBtn" class="secondary hidden" onclick="resetForm()">إلغاء التعديل</button>
-          <button class="danger" onclick="clearAllStudents()">حذف جميع الطلاب</button>
-        </div>
+ if(!name || !id || !committee || !place){
+  alert("عبي كل البيانات");
+  return;
+ }
 
-        <div id="formMsg" class="message"></div>
-      </section>
+ await addDoc(collection(db,"students"),{
+   name,id,committee,place
+ });
 
-      <section class="card">
-        <div class="table-head">
-          <h2>قائمة الطلاب</h2>
-          <input id="adminSearch" type="text" placeholder="بحث بالاسم أو الهوية" oninput="renderTable()" />
-        </div>
+ alert("تم الحفظ");
+ loadStudents();
+}
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>الاسم</th>
-                <th>رقم الهوية</th>
-                <th>رقم اللجنة</th>
-                <th>المقر</th>
-                <th>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody id="studentsTable"></tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-  </main>
+window.searchStudent = async function(){
+ const id=document.getElementById("searchId").value;
+ const querySnapshot = await getDocs(collection(db, "students"));
 
-  <footer>© نظام اللجان</footer>
+ let found=false;
+ querySnapshot.forEach((doc) => {
+   const s=doc.data();
 
-  <script>
-    const ADMIN_PASSWORD = "School@2026";
-
-    const DEFAULT_STUDENTS = [
-      {
-        name: "محمد أحمد",
-        id: "1234567890",
-        committee: "12",
-        place: "مبنى A - الدور الثاني - قاعة 203"
-      },
-      {
-        name: "سالم خالد",
-        id: "1112223334",
-        committee: "7",
-        place: "مبنى B - الدور الأول - قاعة 105"
-      }
-    ];
-
-    let editIndex = null;
-
-    function getStudents() {
-      const saved = localStorage.getItem("studentsData");
-      if (!saved) {
-        localStorage.setItem("studentsData", JSON.stringify(DEFAULT_STUDENTS));
-        return DEFAULT_STUDENTS;
-      }
-      return JSON.parse(saved);
-    }
-
-    function saveStudents(students) {
-      localStorage.setItem("studentsData", JSON.stringify(students));
-    }
-
-    function hideAllPages() {
-      document.getElementById("studentPage").classList.add("hidden");
-      document.getElementById("adminLoginPage").classList.add("hidden");
-      document.getElementById("adminPanel").classList.add("hidden");
-    }
-
-    function showStudentPage() {
-      hideAllPages();
-      document.getElementById("studentPage").classList.remove("hidden");
-    }
-
-    function showAdminLogin() {
-      hideAllPages();
-
-      if (sessionStorage.getItem("adminLoggedIn") === "yes") {
-        document.getElementById("adminPanel").classList.remove("hidden");
-        renderTable();
-      } else {
-        document.getElementById("adminLoginPage").classList.remove("hidden");
-      }
-    }
-
-    function searchStudent() {
-      const id = document.getElementById("nationalId").value.trim();
-      const result = document.getElementById("studentResult");
-      const students = getStudents();
-
-      result.className = "result";
-
-      if (!id) {
-        result.classList.add("error");
-        result.innerHTML = "اكتب رقم الهوية أولاً.";
-        return;
-      }
-
-      const student = students.find(s => s.id === id);
-
-      if (!student) {
-        result.classList.add("error");
-        result.innerHTML = "لم يتم العثور على بيانات لهذا الرقم. تأكد من رقم الهوية.";
-        return;
-      }
-
-      result.innerHTML = `
-        <h3>بيانات اللجنة</h3>
-        <p><b>اسم الطالب:</b> ${student.name}</p>
-        <p><b>رقم الهوية:</b> ${student.id}</p>
-        <p><b>رقم اللجنة:</b> ${student.committee}</p>
-        <p><b>مقر اللجنة:</b> ${student.place}</p>
+   if(s.id===id){
+      found=true;
+      document.getElementById("result").innerHTML=`
+      <h3>تم العثور على البيانات</h3>
+      <p>الاسم: ${s.name}</p>
+      <p>رقم اللجنة: ${s.committee}</p>
+      <p>المقر: ${s.place}</p>
       `;
-    }
+   }
+ });
 
-    function loginAdmin() {
-      const password = document.getElementById("adminPassword").value;
-      const msg = document.getElementById("loginMsg");
+ if(!found){
+   document.getElementById("result").innerHTML="لا توجد بيانات";
+ }
+}
 
-      if (password === ADMIN_PASSWORD) {
-        sessionStorage.setItem("adminLoggedIn", "yes");
-        hideAllPages();
-        document.getElementById("adminPanel").classList.remove("hidden");
-        renderTable();
-      } else {
-        msg.textContent = "كلمة المرور غير صحيحة.";
-        msg.style.color = "#dc2626";
-      }
-    }
+async function loadStudents(){
+ const tbody=document.getElementById("table");
+ tbody.innerHTML="";
 
-    function validateForm() {
-      const name = document.getElementById("studentName").value.trim();
-      const id = document.getElementById("studentId").value.trim();
-      const committee = document.getElementById("committeeNo").value.trim();
-      const place = document.getElementById("committeePlace").value.trim();
+ const querySnapshot = await getDocs(collection(db, "students"));
 
-      if (!name || !id || !committee || !place) {
-        return "جميع الحقول مطلوبة.";
-      }
+ querySnapshot.forEach((d) => {
+   const s=d.data();
 
-      if (!/^\d{10}$/.test(id)) {
-        return "رقم الهوية يجب أن يكون 10 أرقام.";
-      }
+   tbody.innerHTML += `
+   <tr>
+   <td>${s.name}</td>
+   <td>${s.id}</td>
+   <td>${s.committee}</td>
+   <td>${s.place}</td>
+   <td><button class="danger" onclick="deleteStudent('${d.id}')">حذف</button></td>
+   </tr>
+   `;
+ });
+}
 
-      const students = getStudents();
-      const duplicated = students.some((s, index) => s.id === id && index !== editIndex);
+window.deleteStudent = async function(id){
+ await deleteDoc(doc(db,"students",id));
+ loadStudents();
+}
+</script>
 
-      if (duplicated) {
-        return "رقم الهوية موجود مسبقاً.";
-      }
-
-      return "";
-    }
-
-    function saveStudent() {
-      const error = validateForm();
-      const msg = document.getElementById("formMsg");
-
-      if (error) {
-        msg.textContent = error;
-        msg.style.color = "#dc2626";
-        return;
-      }
-
-      const students = getStudents();
-
-      const student = {
-        name: document.getElementById("studentName").value.trim(),
-        id: document.getElementById("studentId").value.trim(),
-        committee: document.getElementById("committeeNo").value.trim(),
-        place: document.getElementById("committeePlace").value.trim()
-      };
-
-      if (editIndex === null) {
-        students.push(student);
-        msg.textContent = "تمت إضافة الطالب بنجاح.";
-      } else {
-        students[editIndex] = student;
-        msg.textContent = "تم تعديل بيانات الطالب بنجاح.";
-      }
-
-      msg.style.color = "#16a34a";
-      saveStudents(students);
-      resetForm();
-      renderTable();
-    }
-
-    function renderTable() {
-      const table = document.getElementById("studentsTable");
-      const q = document.getElementById("adminSearch").value.trim();
-      const students = getStudents();
-
-      table.innerHTML = "";
-
-      students
-        .map((student, index) => ({ student, index }))
-        .filter(({ student }) => student.name.includes(q) || student.id.includes(q))
-        .forEach(({ student, index }) => {
-          const row = document.createElement("tr");
-
-          row.innerHTML = `
-            <td>${student.name}</td>
-            <td>${student.id}</td>
-            <td>${student.committee}</td>
-            <td>${student.place}</td>
-            <td>
-              <button class="small-btn" onclick="editStudent(${index})">تعديل</button>
-              <button class="small-btn danger" onclick="deleteStudent(${index})">حذف</button>
-            </td>
-          `;
-
-          table.appendChild(row);
-        });
-    }
-
-    function editStudent(index) {
-      const student = getStudents()[index];
-
-      document.getElementById("studentName").value = student.name;
-      document.getElementById("studentId").value = student.id;
-      document.getElementById("committeeNo").value = student.committee;
-      document.getElementById("committeePlace").value = student.place;
-
-      editIndex = index;
-
-      document.getElementById("formTitle").textContent = "تعديل طالب";
-      document.getElementById("cancelBtn").classList.remove("hidden");
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function deleteStudent(index) {
-      if (!confirm("هل تريد حذف هذا الطالب؟")) return;
-
-      const students = getStudents();
-      students.splice(index, 1);
-      saveStudents(students);
-      renderTable();
-    }
-
-    function clearAllStudents() {
-      if (!confirm("سيتم حذف جميع الطلاب. هل أنت متأكد؟")) return;
-
-      saveStudents([]);
-      renderTable();
-    }
-
-    function resetForm() {
-      document.getElementById("studentName").value = "";
-      document.getElementById("studentId").value = "";
-      document.getElementById("committeeNo").value = "";
-      document.getElementById("committeePlace").value = "";
-
-      editIndex = null;
-
-      document.getElementById("formTitle").textContent = "إضافة طالب";
-      document.getElementById("cancelBtn").classList.add("hidden");
-    }
-
-    document.getElementById("nationalId").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") searchStudent();
-    });
-
-    document.getElementById("adminPassword").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") loginAdmin();
-    });
-  </script>
 </body>
 </html>
