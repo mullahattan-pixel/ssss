@@ -1,112 +1,557 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>استعلام اللجنة</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نظام الاستعلام عن اللجان</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: Tahoma, Arial, sans-serif;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      text-align: center;
-      padding: 40px;
+      margin: 0;
+      background: #f3f6fb;
+      color: #152238;
     }
 
-    .box {
-      background: white;
-      max-width: 400px;
-      margin: auto;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px #ccc;
-    }
-
-    input {
-      width: 90%;
-      padding: 12px;
-      margin: 15px 0;
-      font-size: 16px;
-      text-align: center;
-    }
-
-    button {
-      width: 95%;
-      padding: 12px;
-      background: #2f6fed;
+    .topbar {
+      background: linear-gradient(135deg, #1d4ed8, #0f172a);
       color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
+      padding: 24px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
-    button:hover {
-      opacity: 0.9;
+    .topbar h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 0;
+      opacity: .9;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-buttons button {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.6);
+      color: white;
+      margin: 0;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: 35px auto;
     }
 
     .card {
-      margin-top: 20px;
-      background: #eef4ff;
-      padding: 15px;
-      border-radius: 10px;
+      background: white;
+      padding: 24px;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
+      margin-bottom: 22px;
     }
 
-    #result {
-      margin-top: 20px;
-      font-size: 17px;
+    .search-card {
+      max-width: 520px;
+      margin: 60px auto;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .hint {
+      color: #64748b;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #1d4ed8;
+      color: white;
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 14px;
+    }
+
+    button:hover {
+      opacity: .92;
+    }
+
+    .secondary {
+      background: #64748b;
+    }
+
+    .danger {
+      background: #dc2626;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .result {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+    }
+
+    .result.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .result h3 {
+      margin-top: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .message {
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    .table-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .table-head input {
+      max-width: 300px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    th, td {
+      padding: 13px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: right;
+    }
+
+    th {
+      background: #f8fafc;
+    }
+
+    .small-btn {
+      padding: 8px 10px;
+      font-size: 14px;
+      margin: 2px;
+    }
+
+    footer {
+      text-align: center;
+      color: #64748b;
+      padding: 20px;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .table-head input {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
 
 <body>
+  <header class="topbar">
+    <div>
+      <h1>نظام الاستعلام عن اللجان</h1>
+      <p>الطالب يدخل رقم هويته وتظهر له بيانات اللجنة والمقر</p>
+    </div>
 
-  <div class="box">
-    <h2>استعلام بيانات اللجنة</h2>
+    <div class="nav-buttons">
+      <button onclick="showStudentPage()">استعلام الطالب</button>
+      <button onclick="showAdminLogin()">لوحة الإدارة</button>
+    </div>
+  </header>
 
-    <input 
-      id="idNumber" 
-      type="text" 
-      placeholder="مثال: 1087654321">
+  <main class="container">
 
-    <button onclick="searchStudent()">بحث</button>
+    <!-- صفحة الطالب -->
+    <section id="studentPage" class="card search-card">
+      <h2>استعلام الطالب</h2>
+      <p class="hint">لا يحتاج الطالب إلى تسجيل دخول.</p>
 
-    <div id="result"></div>
-  </div>
+      <label for="nationalId">رقم الهوية</label>
+      <input id="nationalId" type="text" inputmode="numeric" placeholder="مثال: 1234567890" maxlength="10" />
+
+      <button onclick="searchStudent()">بحث</button>
+
+      <div id="studentResult" class="result hidden"></div>
+    </section>
+
+    <!-- تسجيل دخول الإدارة -->
+    <section id="adminLoginPage" class="card hidden">
+      <h2>تسجيل دخول الإدارة</h2>
+      <p class="hint">كلمة المرور الافتراضية: <b>admin123</b></p>
+
+      <label for="adminPassword">كلمة المرور</label>
+      <input id="adminPassword" type="password" placeholder="أدخل كلمة المرور" />
+
+      <button onclick="loginAdmin()">دخول</button>
+
+      <div id="loginMsg" class="message"></div>
+    </section>
+
+    <!-- لوحة الإدارة -->
+    <section id="adminPanel" class="hidden">
+      <section class="card">
+        <h2 id="formTitle">إضافة طالب</h2>
+
+        <div class="grid">
+          <div>
+            <label for="studentName">اسم الطالب</label>
+            <input id="studentName" type="text" placeholder="مثال: محمد أحمد" />
+          </div>
+
+          <div>
+            <label for="studentId">رقم الهوية</label>
+            <input id="studentId" type="text" inputmode="numeric" maxlength="10" placeholder="مثال: 1234567890" />
+          </div>
+
+          <div>
+            <label for="committeeNo">رقم اللجنة</label>
+            <input id="committeeNo" type="text" placeholder="مثال: 12" />
+          </div>
+
+          <div>
+            <label for="committeePlace">مقر اللجنة</label>
+            <input id="committeePlace" type="text" placeholder="مثال: مبنى A - الدور الثاني" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button onclick="saveStudent()">حفظ الطالب</button>
+          <button id="cancelBtn" class="secondary hidden" onclick="resetForm()">إلغاء التعديل</button>
+          <button class="danger" onclick="clearAllStudents()">حذف جميع الطلاب</button>
+        </div>
+
+        <div id="formMsg" class="message"></div>
+      </section>
+
+      <section class="card">
+        <div class="table-head">
+          <h2>قائمة الطلاب</h2>
+          <input id="adminSearch" type="text" placeholder="بحث بالاسم أو الهوية" oninput="renderTable()" />
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>رقم الهوية</th>
+                <th>رقم اللجنة</th>
+                <th>المقر</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer>© نظام اللجان</footer>
 
   <script>
-    const API_URL = "ضع_رابط_Apps_Script_هنا";
+    const ADMIN_PASSWORD = "admin123";
+
+    const DEFAULT_STUDENTS = [
+      {
+        name: "محمد أحمد",
+        id: "1234567890",
+        committee: "12",
+        place: "مبنى A - الدور الثاني - قاعة 203"
+      },
+      {
+        name: "سالم خالد",
+        id: "1112223334",
+        committee: "7",
+        place: "مبنى B - الدور الأول - قاعة 105"
+      }
+    ];
+
+    let editIndex = null;
+
+    function getStudents() {
+      const saved = localStorage.getItem("studentsData");
+      if (!saved) {
+        localStorage.setItem("studentsData", JSON.stringify(DEFAULT_STUDENTS));
+        return DEFAULT_STUDENTS;
+      }
+      return JSON.parse(saved);
+    }
+
+    function saveStudents(students) {
+      localStorage.setItem("studentsData", JSON.stringify(students));
+    }
+
+    function hideAllPages() {
+      document.getElementById("studentPage").classList.add("hidden");
+      document.getElementById("adminLoginPage").classList.add("hidden");
+      document.getElementById("adminPanel").classList.add("hidden");
+    }
+
+    function showStudentPage() {
+      hideAllPages();
+      document.getElementById("studentPage").classList.remove("hidden");
+    }
+
+    function showAdminLogin() {
+      hideAllPages();
+
+      if (sessionStorage.getItem("adminLoggedIn") === "yes") {
+        document.getElementById("adminPanel").classList.remove("hidden");
+        renderTable();
+      } else {
+        document.getElementById("adminLoginPage").classList.remove("hidden");
+      }
+    }
 
     function searchStudent() {
-      const id = document.getElementById("idNumber").value.trim();
-      const result = document.getElementById("result");
+      const id = document.getElementById("nationalId").value.trim();
+      const result = document.getElementById("studentResult");
+      const students = getStudents();
+
+      result.className = "result";
 
       if (!id) {
-        result.innerHTML = "اكتب رقم الهوية أولًا";
+        result.classList.add("error");
+        result.innerHTML = "اكتب رقم الهوية أولاً.";
         return;
       }
 
-      result.innerHTML = "جاري البحث...";
+      const student = students.find(s => s.id === id);
 
-      fetch(`${API_URL}?id=${id}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.found) {
-            result.innerHTML = `
-              <div class="card">
-                <p><b>اسم الطالب:</b> ${data.name}</p>
-                <p><b>رقم اللجنة:</b> ${data.committee}</p>
-                <p><b>مقر اللجنة:</b> ${data.location}</p>
-              </div>
-            `;
-          } else {
-            result.innerHTML = "رقم الهوية غير موجود";
-          }
-        })
-        .catch(() => {
-          result.innerHTML = "حدث خطأ، تأكد من رابط النظام";
+      if (!student) {
+        result.classList.add("error");
+        result.innerHTML = "لم يتم العثور على بيانات لهذا الرقم. تأكد من رقم الهوية.";
+        return;
+      }
+
+      result.innerHTML = `
+        <h3>بيانات اللجنة</h3>
+        <p><b>اسم الطالب:</b> ${student.name}</p>
+        <p><b>رقم الهوية:</b> ${student.id}</p>
+        <p><b>رقم اللجنة:</b> ${student.committee}</p>
+        <p><b>مقر اللجنة:</b> ${student.place}</p>
+      `;
+    }
+
+    function loginAdmin() {
+      const password = document.getElementById("adminPassword").value;
+      const msg = document.getElementById("loginMsg");
+
+      if (password === ADMIN_PASSWORD) {
+        sessionStorage.setItem("adminLoggedIn", "yes");
+        hideAllPages();
+        document.getElementById("adminPanel").classList.remove("hidden");
+        renderTable();
+      } else {
+        msg.textContent = "كلمة المرور غير صحيحة.";
+        msg.style.color = "#dc2626";
+      }
+    }
+
+    function validateForm() {
+      const name = document.getElementById("studentName").value.trim();
+      const id = document.getElementById("studentId").value.trim();
+      const committee = document.getElementById("committeeNo").value.trim();
+      const place = document.getElementById("committeePlace").value.trim();
+
+      if (!name || !id || !committee || !place) {
+        return "جميع الحقول مطلوبة.";
+      }
+
+      if (!/^\d{10}$/.test(id)) {
+        return "رقم الهوية يجب أن يكون 10 أرقام.";
+      }
+
+      const students = getStudents();
+      const duplicated = students.some((s, index) => s.id === id && index !== editIndex);
+
+      if (duplicated) {
+        return "رقم الهوية موجود مسبقاً.";
+      }
+
+      return "";
+    }
+
+    function saveStudent() {
+      const error = validateForm();
+      const msg = document.getElementById("formMsg");
+
+      if (error) {
+        msg.textContent = error;
+        msg.style.color = "#dc2626";
+        return;
+      }
+
+      const students = getStudents();
+
+      const student = {
+        name: document.getElementById("studentName").value.trim(),
+        id: document.getElementById("studentId").value.trim(),
+        committee: document.getElementById("committeeNo").value.trim(),
+        place: document.getElementById("committeePlace").value.trim()
+      };
+
+      if (editIndex === null) {
+        students.push(student);
+        msg.textContent = "تمت إضافة الطالب بنجاح.";
+      } else {
+        students[editIndex] = student;
+        msg.textContent = "تم تعديل بيانات الطالب بنجاح.";
+      }
+
+      msg.style.color = "#16a34a";
+      saveStudents(students);
+      resetForm();
+      renderTable();
+    }
+
+    function renderTable() {
+      const table = document.getElementById("studentsTable");
+      const q = document.getElementById("adminSearch").value.trim();
+      const students = getStudents();
+
+      table.innerHTML = "";
+
+      students
+        .map((student, index) => ({ student, index }))
+        .filter(({ student }) => student.name.includes(q) || student.id.includes(q))
+        .forEach(({ student, index }) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${student.name}</td>
+            <td>${student.id}</td>
+            <td>${student.committee}</td>
+            <td>${student.place}</td>
+            <td>
+              <button class="small-btn" onclick="editStudent(${index})">تعديل</button>
+              <button class="small-btn danger" onclick="deleteStudent(${index})">حذف</button>
+            </td>
+          `;
+
+          table.appendChild(row);
         });
     }
-  </script>
 
+    function editStudent(index) {
+      const student = getStudents()[index];
+
+      document.getElementById("studentName").value = student.name;
+      document.getElementById("studentId").value = student.id;
+      document.getElementById("committeeNo").value = student.committee;
+      document.getElementById("committeePlace").value = student.place;
+
+      editIndex = index;
+
+      document.getElementById("formTitle").textContent = "تعديل طالب";
+      document.getElementById("cancelBtn").classList.remove("hidden");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteStudent(index) {
+      if (!confirm("هل تريد حذف هذا الطالب؟")) return;
+
+      const students = getStudents();
+      students.splice(index, 1);
+      saveStudents(students);
+      renderTable();
+    }
+
+    function clearAllStudents() {
+      if (!confirm("سيتم حذف جميع الطلاب. هل أنت متأكد؟")) return;
+
+      saveStudents([]);
+      renderTable();
+    }
+
+    function resetForm() {
+      document.getElementById("studentName").value = "";
+      document.getElementById("studentId").value = "";
+      document.getElementById("committeeNo").value = "";
+      document.getElementById("committeePlace").value = "";
+
+      editIndex = null;
+
+      document.getElementById("formTitle").textContent = "إضافة طالب";
+      document.getElementById("cancelBtn").classList.add("hidden");
+    }
+
+    document.getElementById("nationalId").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") searchStudent();
+    });
+
+    document.getElementById("adminPassword").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") loginAdmin();
+    });
+  </script>
 </body>
 </html>
